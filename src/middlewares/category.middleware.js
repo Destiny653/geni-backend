@@ -1,6 +1,36 @@
+const multer = require('multer');
+const path = require('path')
 const categoryService = require('../services/category.service')
+
+app.use(express.static(path.join(__dirname, 'uploads')))
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const {title} = req.body;
+        cb(null,  title + path.extname(file.originalname));
+    }
+})
+
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 1024 * 1024 // 1MB
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only JPEG and PNG images are allowed.'));
+        }
+    }
+});
 async function create(req, res, next) {
-    const { title, description, price, rate, img, model } = req.body
+    const { title, description, price, rate,  model } = req.body
+   const img = req.file.filename
     if (!title) {
         return res.status(401).json({ success: false, message: 'Title is required' })
     }
@@ -85,4 +115,5 @@ module.exports = {
     create,
     update,
     findById,
+    upload,
 }
