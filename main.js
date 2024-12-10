@@ -8,6 +8,8 @@ connect(process.env.MONGO_URI)
     const app = express()
     app.use(cors())
     app.use(express.json())
+    app.use(express.static(path.join(__dirname, 'uploads')))
+
 
     // routes
     const clientRoute = require('./routes/client.route'); 

@@ -2,8 +2,6 @@ const multer = require('multer');
 const path = require('path')
 const categoryService = require('../services/category.service')
 
-app.use(express.static(path.join(__dirname, 'uploads')))
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
