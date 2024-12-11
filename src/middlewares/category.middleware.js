@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         const{ title } = await req.body; 
         if(title){
             console.log("title here is: ", title); 
-            cb(null, 'geni-i-' + title.toLowerCase() + path.extname(file.originalname));
+            cb(null, 'geni-i-' + title.toLowerCase() + '.com' + path.extname(file.originalname));
         }else{ 
             return {
                 success: false,
