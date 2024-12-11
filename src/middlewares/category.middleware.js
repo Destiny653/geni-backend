@@ -71,10 +71,11 @@ async function update(req, res, next) {
     const { title, description, price, rate} = req.body  
     const img = `${req.protocol}s://${req.get('host')}/${req.file.filename}`;
     console.log("File is: ", req.file);
-    console.log("img is: ", img); 
-    console.log('Req: ',req);
+    console.log("img is: ", img);  
     
     const { id, model } = req.params
+    console.log("id and model: ", id, model);
+    
     if (!title) {
         return res.status(401).json({ success: false, message: 'Title is required' })
     }
@@ -93,6 +94,12 @@ async function update(req, res, next) {
     if (!model) {
         return res.status(401).json({ success: false, message: 'Model is required.' })
     }
+
+    const verifyId = await categoryService.verifyProduct("_id", id, model)
+    if (!verifyId.success) {
+        return res.status(verifyId.status).json({ success: false, message: verifyId.message })
+    }
+    
     req._data = {
         id,
         title,

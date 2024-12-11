@@ -9,7 +9,7 @@ router.post('/create', upload.single('img'), categoryMiddleware.create, category
 router.get('/', categoryController.getAllProducts);
 router.get('/:model', categoryController.getProductByModel);
 router.get('/:id/:model', categoryMiddleware.findById, categoryController.getProductById);
-router.post('/update/:id', upload.single('img'), categoryMiddleware.update, categoryController.updateProductById);
+router.post('/:id/:model', upload.single('img'), categoryMiddleware.update, categoryController.updateProductById);
 router.delete('/:id/:model', categoryMiddleware.findById, categoryController.deleteProductById)
 
 module.exports = router;

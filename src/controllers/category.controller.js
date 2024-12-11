@@ -29,8 +29,8 @@ const getProductById = async (req, res) => {
 
 const updateProductById = async (req, res) => {
     const _data = req._data
-    const model = _data.model.charAt(0).toUpperCase() + _data.model.slice(1).toLowerCase();
-    const data = await categoryService.updateProduct(_data.id, _data, model)
+    const mod = _data.model = _data.model.charAt(0).toUpperCase() + _data.model.slice(1).toLowerCase();
+    const data = await categoryService.updateProduct(_data.id, _data, mod)
     res.status(data.status).json(data)
 }
 
