@@ -36,7 +36,7 @@ const upload = multer({
 });
 async function create(req, res, next) {
     const { title, description, price, rate, model } = req.body
-    const img = `${req.protocol}://${req.get('host')}/${req.file.filename}`;
+    const img = `${req.protocol}s://${req.get('host')}/${req.file.filename}`;
     console.log("File is: ", req.file);
     console.log("img is: ", img); 
 
