@@ -1,6 +1,6 @@
-const categoryService = require('../services/category.service')
+const categoryService = require('../services/category.service') 
 const createProduct = async (req, res) => {
-    const _data = req._data
+    const _data = req._data 
     const model = _data.model.charAt(0).toUpperCase() + _data.model.slice(1).toLowerCase()
     const data = await categoryService.createProduct(_data, model)
     res.status(data.status).json(data)

@@ -3,6 +3,7 @@ const express = require('express');
 const {connect} = require('mongoose');
 const cors = require('cors')
 const path = require('path')
+const multer = require('multer')
 
 connect(process.env.MONGO_URI)
 .then((connection)=>{
@@ -59,6 +60,24 @@ connect(process.env.MONGO_URI)
                 timestamp: new Date()
             }
         })
+    });
+
+    app.use((err, req, res, next) => {
+        if (err instanceof multer.MulterError) {
+            res.status(400).json({
+                status_code: 400,
+                status: 'UPLOAD_ERROR!!',
+                message: err.message
+            });
+        } else if (err) {
+            res.status(500).json({
+                status_code: 500,
+                status: 'ERROR!!',
+                message: err.message
+            });
+        } else {
+            next();
+        }
     });
 
     const PORT = process.env.PORT || 3000; 

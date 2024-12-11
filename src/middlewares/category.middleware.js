@@ -1,21 +1,29 @@
+const categoryService = require('../services/category.service')
 const multer = require('multer');
 const path = require('path')
-const categoryService = require('../services/category.service')
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+    destination: async (req, file, cb) => {
+        cb(null, 'uploads/'); 
     },
-    filename: (req, file, cb) => {
-        const {title} = req.body;
-        cb(null,  title + path.extname(file.originalname));
+    filename: async (req, file, cb) => {
+        const{ title } = await req.body; 
+        if(title){
+            console.log("title here is: ", title); 
+            cb(null, 'geni-i-' + title.toLowerCase() + path.extname(file.originalname));
+        }else{ 
+            return {
+                success: false,
+                message: 'Title is required here'
+            }
+        }
     }
 })
 
 const upload = multer({
     storage,
     limits: {
-        fileSize: 1024 * 1024 // 1MB
+        fileSize: (1024 * 1024) * 2 // 2MB
     },
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png'];
@@ -23,12 +31,15 @@ const upload = multer({
             cb(null, true);
         } else {
             cb(new Error('Invalid file type. Only JPEG and PNG images are allowed.'));
-        }
+        } 
     }
 });
 async function create(req, res, next) {
-    const { title, description, price, rate,  model } = req.body
-   const img = req.file.filename
+    const { title, description, price, rate, model } = req.body
+    const img = `${req.protocol}://${req.get('host')}/${req.file.filename}`;
+    console.log("File is: ", req.file);
+    console.log("img is: ", img); 
+
     if (!title) {
         return res.status(401).json({ success: false, message: 'Title is required' })
     }
@@ -40,16 +51,13 @@ async function create(req, res, next) {
     }
     if (!rate) {
         return res.status(401).json({ success: false, message: 'Rate is required' })
-    }
-    if (!img) {
-        return res.status(401).json({ success: false, message: 'Image is required' })
-    }
+    } 
     if (!model) {
         return res.status(401).json({ success: false, message: 'Model is required.' })
     }
     req._data = {
         title,
-        description, 
+        description,
         price,
         rate,
         img,
@@ -66,7 +74,7 @@ async function update(req, res, next) {
     }
     if (!description) {
         return res.status(401).json({ success: false, message: 'Description is required' })
-    } 
+    }
     if (!price) {
         return res.status(401).json({ success: false, message: 'Price is required' })
     }
@@ -82,7 +90,7 @@ async function update(req, res, next) {
     req._data = {
         id,
         title,
-        description, 
+        description,
         price,
         rate,
         img,
