@@ -7,9 +7,9 @@ const categoryMiddleware = require('../src/middlewares/category.middleware');
 const {upload} = require('../src/middlewares/category.middleware')
 router.post('/create', upload.single('img'), categoryMiddleware.create, categoryController.createProduct);
 router.get('/', categoryController.getAllProducts);
-router.get('/get/:model', categoryController.getProductByModel);
+router.get('/:model', categoryController.getProductByModel);
 router.get('/:id/:model', categoryMiddleware.findById, categoryController.getProductById);
-router.put('/update/:id', categoryMiddleware.update, categoryController.updateProductById);
+router.post('/update/:id', upload.single('img'), categoryMiddleware.update, categoryController.updateProductById);
 router.delete('/:id/:model', categoryMiddleware.findById, categoryController.deleteProductById)
 
 module.exports = router;

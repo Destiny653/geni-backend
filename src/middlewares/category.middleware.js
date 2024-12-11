@@ -1,10 +1,10 @@
-const categoryService = require('../services/category.service')
+const categoryService = require('../services/category.service') 
 const multer = require('multer');
 const path = require('path')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); 
+        cb(null, 'uploads/');  
     },
     filename: async (req, file, cb) => {
         const{ title } = req.body; 
@@ -68,8 +68,13 @@ async function create(req, res, next) {
 }
 
 async function update(req, res, next) {
-    const { title, description, price, rate, img, model } = req.body
-    const { id } = req.params
+    const { title, description, price, rate} = req.body  
+    const img = `${req.protocol}s://${req.get('host')}/${req.file.filename}`;
+    console.log("File is: ", req.file);
+    console.log("img is: ", img); 
+    console.log('Req: ',req);
+    
+    const { id, model } = req.params
     if (!title) {
         return res.status(401).json({ success: false, message: 'Title is required' })
     }
