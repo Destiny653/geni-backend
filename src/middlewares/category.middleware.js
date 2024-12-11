@@ -3,14 +3,14 @@ const multer = require('multer');
 const path = require('path')
 
 const storage = multer.diskStorage({
-    destination: async (req, file, cb) => {
+    destination: (req, file, cb) => {
         cb(null, 'uploads/'); 
     },
     filename: async (req, file, cb) => {
-        const{ title } = await req.body; 
+        const{ title } = req.body; 
         if(title){
             console.log("title here is: ", title); 
-            cb(null, 'geni-i-' + title.toLowerCase() + '.com' + path.extname(file.originalname));
+            cb(null, title.toLowerCase() + path.extname(file.originalname));
         }else{ 
             return {
                 success: false,
@@ -33,9 +33,10 @@ const upload = multer({
             cb(new Error('Invalid file type. Only JPEG and PNG images are allowed.'));
         } 
     }
-});
+}); 
 async function create(req, res, next) {
-    const { title, description, price, rate, model } = req.body
+    const { title, description, price, rate, model } = req.body 
+    
     const img = `${req.protocol}s://${req.get('host')}/${req.file.filename}`;
     console.log("File is: ", req.file);
     console.log("img is: ", img); 
