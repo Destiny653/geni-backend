@@ -8,9 +8,14 @@ const clientLogin = async(req, res)=>{
     const data = await clientService.clientLogin(_data, password)
     res.status(data.status).json(data)
 }
+const mailVerification = async(req, res)=>{
+    const {email} = req.body
+    const data = await clientService.authenticateEmail(email)
+    res.status(data.status).json({message:data.message})
+}
 const registerClient = async(req, res)=>{
     const _data = req._data
-    const data = await clientService.registerClient(_data)
+    const data = await clientService.registerClient(_data.data)
     console.log(data);
     res.status(data.status).json(data) 
 }
@@ -56,4 +61,5 @@ module.exports = {
     getMessages,
     forgotPassword,
     resetPassword,
+    mailVerification,
 }

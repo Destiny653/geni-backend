@@ -7,6 +7,7 @@ const axios = require('axios');
 const validator = require('validator');
 const nodemailer = require('nodemailer');
 
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -19,8 +20,8 @@ const transporter = nodemailer.createTransport({
 
 const validateEmail = async (email) => {
 
-     // Step 1: Validate email format
-     if (!validator.isEmail(email)) {
+    // Step 1: Validate email format
+    if (!validator.isEmail(email)) {
         return {
             success: false,
             status: 400,
@@ -28,36 +29,29 @@ const validateEmail = async (email) => {
         };
     }
 
-    const apiKey = process.env.HUNTERIO_API_KEY; // Store your API key in .env
-    const url = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${apiKey}`;
+    const apiKey = process.env.API_KEY; // Store your API key in .env
+    const url = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=4ad138433227e7967feb4cbf761758f8825f69c1`;
 
     try {
         const response = await axios.get(url);
-        const result = response.data.data; // Contains the email verification results
+        // console.log(`Email: ${email}, Status: ${response.data}`);
+        const result = await response.data.data; // Contains the email verification results
         const data = {
-            email: result.email,
-            score: result.score
+            result
         }
-         if(result.status == 'valid'){
-             return {
-                success: true,
-                status: 200,
-                message: 'Email is valid.',
-                data 
-             }
-         }else{
-             return {
-                success: false,
-                status: 400,
-                message: 'Email is not valid, please provide a valid email.',
-             }
-         }
+        return {
+            success: true,
+            status: 200,
+            message: 'Email is valid.',
+            data
+        }
+
     } catch (error) {
-        console.error('Error verifying email with Hunter.io:', error.message); 
-        return{
+        console.error('Error verifying email with neverbounce:', error.message);
+        return {
             success: false,
             status: 500,
-            message: 'Error verifying email: '+ error.message
+            message: 'Error verifying email: ' + error.message
         }
     }
 };
@@ -68,11 +62,18 @@ const sendMail = async (email, otp) => {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: 'Verification Code',
+            subject: 'Geni-i Verification Code',
             html: `
                 <h1>Welcome to GENI~I Provision!</h1>
                 <h3>Use this code to continue your registration process.</h3>
                 <h4>Your verification code is: <h1 style="color:green">${otp}</h1></h4>
+                <p>This code will expire in 15 minutes.</p>
+                <p>Please do not share this code with anyone else.</p>
+                <p>If you did not request this verification code, please ignore this email.</p>
+                <p>Thank you for using GENI~I Provision.</p>
+                <a href="https://geni-dashboard.vercel.app/dashboard/login">
+                <button style="background-color:blue; border-radius:4px; padding: 3px 4px">Click to continue</button>
+                </a>
             `,
         };
 
@@ -177,9 +178,13 @@ const hashPassword = async (password) => {
         return false;
     }
 }
-const verifyClient = async (key, value) => {
+const verifyClient = async (key, value, model) => {
+    const models = {
+        'Client': Client,
+        'Otp': Otp
+    }
     try {
-        const client = await Client.findOne({ [key]: value }).populate('message');
+        const client = await models[model].findOne({ [key]: value });
         if (client) {
             return {
                 success: true,
@@ -206,15 +211,16 @@ const verifyClient = async (key, value) => {
     }
 }
 
-const clientLogin = async (_data, password) => {
-    const compare = await comparePasswords(password, _data.password)
+const clientLogin = async (data, password) => {
+    const compare = await comparePasswords(password, data.password)
     if (compare.success) {
-        const token = jwt.sign({ id: _data._id }, 'secret_key', { expiresIn: '1h' });
+        const token = jwt.sign({ id: data._id }, 'secret_key', { expiresIn: '1h' });
         return {
             success: true,
             status: 200,
             message: 'Login successful',
-            data: { token },
+            token: token,
+            data
         }
     } else {
         return {
@@ -226,13 +232,13 @@ const clientLogin = async (_data, password) => {
     }
 }
 
-const generateOTP = async (clientId) => {
+const generateOTP = async (email) => {
     try {
         const otpCode = await random(6);
         console.log("otpCode: ", otpCode);
-        
+
         const otp = new Otp({
-            client: clientId,
+            client: email,
             otp: otpCode,
             expired_at: generateExpired(15)  // 15 minutes expiry time 60 * 15 = 900 seconds
         });
@@ -254,31 +260,25 @@ const generateOTP = async (clientId) => {
     }
 }
 
+const authenticateEmail = async (email) => {
+    const otp = await generateOTP(email)
+    if (otp.success) {
+        const sendOTP = await sendMail(email, otp.data.otp)
+        console.log("Email sent: " + JSON.stringify(sendOTP));  
+        return {
+            success: true,
+            status: 200,
+            message: 'Check your email to get your verification code.', 
+        }
+    }
+}
+
 const registerClient = async (_data) => {
     try {
         const hashedPassword = await hashPassword(_data.password);
         const client = new Client({ ..._data, password: hashedPassword });
         const savedClient = await client.save();
         if (savedClient) {
-
-            const otp = await generateOTP(savedClient._id) 
-
-            if (otp.success) {
-                const sendOTP = await sendMail(savedClient.email, otp.data.otp)
-                console.log("Email sent: " + JSON.stringify(sendOTP));
-
-                if (!sendOTP.success) {
-                    const rem = await Client.findByIdAndDelete({ _id: savedClient._id })
-                    console.log("Invalid email deletion: " + rem);
-
-                    return {
-                        success: false,
-                        status: 500,
-                        message: 'The email you provided is invalied please verify your email or try using another account.',
-                        data: {},
-                    }
-                }
-            }
             return {
                 success: true,
                 status: 201,
@@ -308,7 +308,7 @@ const resetPassword = async (password, code) => {
     try {
         const userOTP = await Otp.findOne({ "otp": code, "expired_at": { $gt: new Date() } })
         console.log('userOTP is: ', userOTP);
-        
+
         if (!userOTP) {
             return {
                 success: false,
@@ -329,7 +329,7 @@ const resetPassword = async (password, code) => {
         Otp.deleteOne({ _id: userOTP._id });
         return {
             success: true,
-            status: 200, 
+            status: 200,
             message: 'Password reset successfully',
             data: {
                 email: user.email
@@ -344,26 +344,37 @@ const resetPassword = async (password, code) => {
     }
 }
 
-const verifyOTP = async (email, otp) => {
-    const userOTP = await Otp.findOne({ "otp": otp, "expired_at": { $gt: new Date() } }).populate({ path: "client", select: { email: 1 } })
-    if (userOTP && userOTP.client.email === email) {
-        return {
-            success: true,
-            status: 200,
-            message: 'OTP verified successfully',
-            data: userOTP,
+const verifyOTP = async (otp) => {
+    try {
+        const data = await Otp.findOne({ "otp": otp, "expired_at": { $gt: new Date() } })
+        console.log("otplog: ", data);
+        if (data) {
+            const token = jwt.sign({ id: data._id }, 'secret_key', { expiresIn: '1h' });
+            return {
+                success: true,
+                status: 200,
+                message: 'Your email is valid you may proceed to registration.',
+                data,
+                token 
+            }
+        } else {
+            await Otp.findOneAndDelete({"otp":otp})
+            return {
+                success: false,
+                status: 401,
+                message: 'Your OTP has expired, resend email to a new one!'
+            }
         }
-    } else {
+    } catch (error) {
         return {
             success: false,
-            status: 401,
-            message: 'Invalid OTP or expired',
-            data: {},
+            status: 500,
+            message: 'Error verifying OTP ' + error.message
         }
     }
 }
-const verifyPassword = async (password, data) => { 
-    
+const verifyPassword = async (password, data) => {
+
     const compare = await comparePasswords(password, data.password)
     if (compare.success) {
         return {
@@ -527,6 +538,7 @@ const deleteMessage = async (id) => {
 }
 
 module.exports = {
+    authenticateEmail,
     verifyClient,
     clientLogin,
     registerClient,
@@ -542,4 +554,5 @@ module.exports = {
     generateOTP,
     sendMail,
     resetPassword,
+    // emailVerifier
 };

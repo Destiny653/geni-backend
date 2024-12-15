@@ -2,8 +2,9 @@ const {Schema, model} = require('mongoose');
 
 const otpSchema = new Schema({
     client:{
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: 'Client',
+        unique:true,
         required: true
     },
     otp: {

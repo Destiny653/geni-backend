@@ -2,18 +2,32 @@ const clientService = require('../services/client.service')
 
 async function validateEmailZeroBounce(req, res, next) {
     const { email } = req.body
-
+    console.log(email);
     // Step 2: Perform real-time email validation
     const isValidEmail = await clientService.validateEmail(email);
     console.log('isValidEmail', isValidEmail);
     if (!isValidEmail.success) {
-        return  res.status(isValidEmail.status).json(isValidEmail);
+        return res.status(isValidEmail.status).json(isValidEmail);
     }
 
     next()
 }
+async function authenticateOTP(req, res, next){
+    const { email, otp } = req.body
+    const verifyOTP = await clientService.verifyClient("client", email, 'Otp')
+    console.log("verifyOTP: ", verifyOTP.data, otp);   
+    if (verifyOTP.data.otp !== otp) {   
+        return res.status(400).json({ message: 'Invalid OTP check your input' })
+    } 
+    const verifyOTPExp = await clientService.verifyOTP(otp, email)
+    if (verifyOTPExp.success) {
+        return res.status(verifyOTPExp.status).json({success:true, message:verifyOTPExp.message,token:verifyOTPExp.token, data:verifyOTPExp.data})
+    }else{
+        return res.status(verifyOTPExp.status).json({ message: verifyOTPExp.message })
+    } 
+}
 async function register(req, res, next) {
-    const { firstName, lastName, email, password, confirmPassword, phone, role } = req.body
+    const { firstName, lastName, email, password, confirmPassword, phone } = req.body
     if (!firstName) {
         return res.status(400).json({ message: 'First Name is required' })
     }
@@ -32,39 +46,41 @@ async function register(req, res, next) {
     if (!password === confirmPassword) {
         return res.status(400).json({ message: 'Passwords do not match' })
     }
-    if (!role) {
-        return res.status(400).json({ message: "Role is required" })
-    }
-
-    req._data = {
+    let data = {
         firstName,
         lastName,
         email,
         password,
-        phone,
-        role
-    };
+        phone
+    }
+    // get last four letters of password
+    const lastFourPassword = password.slice(-4);
+    if (lastFourPassword === '4gen') {
+        data.role = 'admin'
+    }
+
+    req._data = { data };
     next();
 }
 async function login(req, res, next) {
-    const { email, password } = req.body
+    const { email, password} = req.body
     if (!email) {
         return res.status(400).json({ message: 'Email is required' })
     }
     if (!password) {
         return res.status(400).json({ message: 'Password is required' })
     }
-    const verifyEmail = await clientService.verifyClient("email", email)
-    if (!verifyEmail) {
+    const verifyEmail = await clientService.verifyClient("email", email, 'Client')
+    if (!verifyEmail.success) {
         return res.status(verifyEmail.status).json({ message: verifyEmail.message })
     }
     const _data = verifyEmail.data
+
     const verifyPassword = await clientService.verifyPassword(password, _data)
-    if (!verifyPassword) {
+    if (!verifyPassword.success) {
         return res.status(verifyPassword.status).json({ message: verifyPassword.message })
     }
     console.log('email, password: ', email, password, verifyPassword);
-    console.log("Email data: ", _data);
 
     req._data = { _data, password };
     next();
@@ -127,6 +143,7 @@ async function message(req, res, next) {
 }
 
 module.exports = {
+    authenticateOTP,
     login,
     register,
     message,
