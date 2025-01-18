@@ -28,32 +28,37 @@ const validateEmail = async (email) => {
             message: 'Invalid email format. Please provide a valid email address.',
         };
     }
-
-    const apiKey = process.env.API_KEY; // Store your API key in .env
-    const url = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=4ad138433227e7967feb4cbf761758f8825f69c1`;
-
-    try {
-        const response = await axios.get(url);
-        // console.log(`Email: ${email}, Status: ${response.data}`);
-        const result = await response.data.data; // Contains the email verification results
-        const data = {
-            result
-        }
-        return {
-            success: true,
-            status: 200,
-            message: 'Email is valid.',
-            data
-        }
-
-    } catch (error) {
-        console.error('Error verifying email with neverbounce:', error.message);
-        return {
-            success: false,
-            status: 500,
-            message: 'Error verifying email: ' + error.message
-        }
+    return {
+        success: true,
+        status: 200,
+        message: 'Email is valid.', 
     }
+
+
+    // const apiKey = process.env.API_KEY;  
+    // const url = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=4ad138433227e7967feb4cbf761758f8825f69c1`;
+
+    // try {
+    //     const response = await axios.get(url); 
+    //     const result = await response.data.data;  
+    //     const data = {
+    //         result
+    //     }
+    //     return {
+    //         success: true,
+    //         status: 200,
+    //         message: 'Email is valid.',
+    //         data
+    //     }
+
+    // } catch (error) {
+    //     console.error('Error verifying email with neverbounce:', error.message);
+    //     return {
+    //         success: false,
+    //         status: 500,
+    //         message: 'Error verifying email: ' + error.message
+    //     }
+    // }
 };
 
 const sendMail = async (email, otp) => {
@@ -127,7 +132,7 @@ const random = async (length) => {
 }
 
 const generateExpired = (min) => {
-    const date = new Date(new Date().getTime() + (60 * 1000 * min));
+    const date = new Date(Date.now() + (60 * 1000 * min));
     return date
 }
 
@@ -234,6 +239,20 @@ const clientLogin = async (data, password) => {
 
 const generateOTP = async (email) => {
     try {
+        // check if email exist
+        const client = await verifyClient('client', email, 'Otp')
+        if (client.success) {
+            // OTP already expired generate new one
+            const otpCode = await random(6);
+            console.log("newOtpCode: ", otpCode);
+            const otp = await Otp.findByIdAndUpdate({ _id: client.data._id }, { $set: { otp: otpCode, expired_at: generateExpired(15)  } })
+            return {
+                success: true,
+                status: 200,
+                message: 'OTP sent successfully',
+                data: otp,
+            }
+        }
         const otpCode = await random(6);
         console.log("otpCode: ", otpCode);
 
@@ -264,11 +283,11 @@ const authenticateEmail = async (email) => {
     const otp = await generateOTP(email)
     if (otp.success) {
         const sendOTP = await sendMail(email, otp.data.otp)
-        console.log("Email sent: " + JSON.stringify(sendOTP));  
+        console.log("Email sent: " + JSON.stringify(sendOTP));
         return {
             success: true,
             status: 200,
-            message: 'Check your email to get your verification code.', 
+            message: 'Check your email to get your verification code.',
         }
     }
 }
@@ -304,19 +323,9 @@ const registerClient = async (_data) => {
     }
 }
 
-const resetPassword = async (password, code) => {
-    try {
-        const userOTP = await Otp.findOne({ "otp": code, "expired_at": { $gt: new Date() } })
-        console.log('userOTP is: ', userOTP);
-
-        if (!userOTP) {
-            return {
-                success: false,
-                status: 401,
-                message: 'Your token might have expired, trying requesting another one.'
-            }
-        }
-        const user = await Client.findById(userOTP.client)
+const resetPassword = async (password, email)=>{
+    try { 
+        const user = await Client.findOne({email})
         if (!user) {
             return {
                 success: false,
@@ -346,23 +355,33 @@ const resetPassword = async (password, code) => {
 
 const verifyOTP = async (otp) => {
     try {
+        const data1 = await Otp.findOne({ "otp": otp })
+        if(!data1){
+            return {
+                success: false,
+                status: 401,
+                message: 'Invalid OTP.'
+            }
+        }
+
         const data = await Otp.findOne({ "otp": otp, "expired_at": { $gt: new Date() } })
         console.log("otplog: ", data);
         if (data) {
+            console.log("YES DATA AVAILABLE");
             const token = jwt.sign({ id: data._id }, 'secret_key', { expiresIn: '1h' });
             return {
                 success: true,
                 status: 200,
-                message: 'Your email is valid you may proceed to registration.',
+                message: 'Your email has been validated you may proceed to registration.',
                 data,
-                token 
+                token
             }
         } else {
-            await Otp.findOneAndDelete({"otp":otp})
+            // await Otp.findOneAndDelete({ "otp": otp })
             return {
                 success: false,
                 status: 401,
-                message: 'Your OTP has expired, resend email to a new one!'
+                message: 'Your OTP has expired, resend email for a new one!'
             }
         }
     } catch (error) {

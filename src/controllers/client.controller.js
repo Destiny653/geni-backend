@@ -11,7 +11,7 @@ const clientLogin = async(req, res)=>{
 const mailVerification = async(req, res)=>{
     const {email} = req.body
     const data = await clientService.authenticateEmail(email)
-    res.status(data.status).json({message:data.message})
+    res.status(data?.status).json({message:data?.message}) 
 }
 const registerClient = async(req, res)=>{
     const _data = req._data
@@ -27,8 +27,8 @@ const forgotPassword = async (req, res) =>{
 }
 
 const resetPassword = async (req, res)=>{
-    const {password, otp} = req.body;
-    const data = await clientService.resetPassword(password, otp)
+    const {password,email}= req.body;
+    const data = await clientService.resetPassword(password, email)
     res.status(data.status).json(data)
 }
 

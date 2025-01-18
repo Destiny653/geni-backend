@@ -16,9 +16,9 @@ async function authenticateOTP(req, res, next){
     const { email, otp } = req.body
     const verifyOTP = await clientService.verifyClient("client", email, 'Otp')
     console.log("verifyOTP: ", verifyOTP.data, otp);   
-    if (verifyOTP.data.otp !== otp) {   
-        return res.status(400).json({ message: 'Invalid OTP check your input' })
-    } 
+    // if (verifyOTP.data.otp !== otp) {   
+    //     return res.status(400).json({ message: 'Invalid OTP check your input' })
+    // } 
     const verifyOTPExp = await clientService.verifyOTP(otp, email)
     if (verifyOTPExp.success) {
         return res.status(verifyOTPExp.status).json({success:true, message:verifyOTPExp.message,token:verifyOTPExp.token, data:verifyOTPExp.data})
@@ -100,13 +100,8 @@ const verifyEmail = async (req, res, next) => {
 }
 
 const verifyPassword = async (req, res, next) => {
-    const { password, confirmPassword, otp } = req.body
-    if (!otp) {
-        return res.status(400).json({
-            error: true,
-            message: 'Code is required to change password'
-        });
-    }
+    const { password, confirmPassword} = req.body 
+    
     if (password !== confirmPassword) {
         return res.status(400).json({
             error: true,
