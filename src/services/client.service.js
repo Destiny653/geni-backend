@@ -556,7 +556,23 @@ const deleteMessage = async (id) => {
     }
 }
 
+const authorized = async(otp)=>{
+    const verified = verifyClient('otp', otp, 'Otp')
+    if(verified){
+        return  {
+            success: true,
+            status: 201 
+        }
+    }else{
+        return  {
+            success: false,
+            status: 401
+        }
+    }
+}
+
 module.exports = {
+    authorized,
     authenticateEmail,
     verifyClient,
     clientLogin,

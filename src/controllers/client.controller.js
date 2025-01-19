@@ -8,6 +8,11 @@ const clientLogin = async(req, res)=>{
     const data = await clientService.clientLogin(_data, password)
     res.status(data.status).json(data)
 }
+const authorizedClient = async(req, res)=>{
+    const {otp} = req.params
+    const data = await clientService.authorized(otp)
+    res.status(data.status).json(data)
+}
 const mailVerification = async(req, res)=>{
     const {email} = req.body
     const data = await clientService.authenticateEmail(email)
@@ -62,4 +67,5 @@ module.exports = {
     forgotPassword,
     resetPassword,
     mailVerification,
+    authorizedClient
 }
