@@ -3,11 +3,11 @@ const {Schema, model} = require('mongoose');
 const messageSchema = new Schema({
     title:{
         type: String,
-        enum:  ['Feedback', 'Question', 'Complaint', 'Suggestion'],
-        default: 'Feedback',
+        enum:  ['feedback', 'question', 'complaint', 'suggestion'],
+        default: 'feedback',
         required: true
     },
-    content:{
+    message:{
         type: String,
         required: true
     },

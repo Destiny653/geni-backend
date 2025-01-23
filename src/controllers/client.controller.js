@@ -47,7 +47,7 @@ const deleteClient = async(req, res)=>{
     res.status(data.status).json(data)
 }
 const sendMessage = async(req, res)=>{
-    const _data = req._data;
+    const _data = req._data; 
     const data = await clientService.sendMessage(_data)
     res.status(data.status).json(data)
 }

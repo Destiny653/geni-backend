@@ -46,6 +46,13 @@ async function register(req, res, next) {
     if (!password === confirmPassword) {
         return res.status(400).json({ message: 'Passwords do not match' })
     }
+
+    const user = await clientService.validateEmail(email)
+
+    if(!user.success){
+        return res.status(user.status).json({message:user.message})
+    }
+    
     let data = {
         firstName,
         lastName,
@@ -79,8 +86,7 @@ async function login(req, res, next) {
     const verifyPassword = await clientService.verifyPassword(password, _data)
     if (!verifyPassword.success) {
         return res.status(verifyPassword.status).json({ message: verifyPassword.message })
-    }
-    console.log('email, password: ', email, password, verifyPassword);
+    } 
 
     req._data = { _data, password };
     next();
@@ -111,28 +117,27 @@ const verifyPassword = async (req, res, next) => {
     next();
 }
 async function message(req, res, next) {
-    const { title, content } = req.body
-    const { id } = req.query
-    if (!content) {
-        return res.status(400).json({ message: 'Content is required' })
+    const { email, message, title } = req.body 
+    if (!message) {
+        return res.status(400).json({ message: 'Message is required' })
     }
-    if (!title) {
+    if(!title){
         return res.status(400).json({ message: 'Title is required' })
     }
-    if (!id) {
-        return res.status(400).json({ message: 'User ID is required' })
-    }
-    const verify = await clientService.verifyClient("_id", id)
-    if (!verify) {
-        return res.status(verify.status).json({ message: verify.message })
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' })
+    } 
+
+    const user = await clientService.verifyClient("email", email, 'Client') 
+
+    if(!user.success){
+        return res.status(400).json({ message: 'User with: '+email+ ' not found.'})
     }
 
-    console.log("logs: ", verify);
-
-    req._data = {
+    req._data = { 
+        message, 
         title,
-        content,
-        client: id
+        client: user.data._id  
     };
     next();
 }

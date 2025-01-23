@@ -31,7 +31,7 @@ const validateEmail = async (email) => {
     return {
         success: true,
         status: 200,
-        message: 'Email is valid.', 
+        message: 'Email is valid.',
     }
 
 
@@ -245,7 +245,7 @@ const generateOTP = async (email) => {
             // OTP already expired generate new one
             const otpCode = await random(6);
             console.log("newOtpCode: ", otpCode);
-            const otp = await Otp.findByIdAndUpdate({ _id: client.data._id }, { $set: { otp: otpCode, expired_at: generateExpired(15)  } })
+            const otp = await Otp.findByIdAndUpdate({ _id: client.data._id }, { $set: { otp: otpCode, expired_at: generateExpired(15) } })
             return {
                 success: true,
                 status: 200,
@@ -323,9 +323,9 @@ const registerClient = async (_data) => {
     }
 }
 
-const resetPassword = async (password, email)=>{
-    try { 
-        const user = await Client.findOne({email})
+const resetPassword = async (password, email) => {
+    try {
+        const user = await Client.findOne({ email })
         if (!user) {
             return {
                 success: false,
@@ -356,7 +356,7 @@ const resetPassword = async (password, email)=>{
 const verifyOTP = async (otp) => {
     try {
         const data1 = await Otp.findOne({ "otp": otp })
-        if(!data1){
+        if (!data1) {
             return {
                 success: false,
                 status: 401,
@@ -473,6 +473,7 @@ const sendMessage = async (_data) => {
         const sent = new Message(_data)
         await sent.save();
         if (sent) {
+            await Client.findOneAndUpdate({ _id: _data.client }, { $push: { message: sent._id } })
             return {
                 success: true,
                 status: 201,
@@ -556,15 +557,15 @@ const deleteMessage = async (id) => {
     }
 }
 
-const authorized = async(otp)=>{
+const authorized = async (otp) => {
     const verified = verifyClient('otp', otp, 'Otp')
-    if(verified){
-        return  {
+    if (verified) {
+        return {
             success: true,
-            status: 201 
+            status: 201
         }
-    }else{
-        return  {
+    } else {
+        return {
             success: false,
             status: 401
         }
