@@ -19,7 +19,8 @@ async function authenticateOTP(req, res, next){
     // if (verifyOTP.data.otp !== otp) {   
     //     return res.status(400).json({ message: 'Invalid OTP check your input' })
     // } 
-    const verifyOTPExp = await clientService.verifyOTP(otp, email)
+    const verifyOTPExp = await clientService.verifyOTP(otp)
+    console.log('verifyOTPExp: ', verifyOTPExp)
     if (verifyOTPExp.success) {
         return res.status(verifyOTPExp.status).json({success:true, message:verifyOTPExp.message,token:verifyOTPExp.token, data:verifyOTPExp.data})
     }else{
@@ -47,6 +48,16 @@ async function register(req, res, next) {
         return res.status(400).json({ message: 'Passwords do not match' })
     }
 
+    const verifyEmail = await clientService.verifyClient("email", email, 'Client')
+    if(verifyEmail.success){
+        return res.status(401).json({message:`Client with email: "${email}" already exist try using another email.`})
+    }
+    const verifyNum = await clientService.verifyClient("phone", phone, 'Client')
+    if(verifyNum.success){
+        return res.status(401).json({message:`Client with phone: "${phone}" already exist.`})
+    }
+
+
     const user = await clientService.validateEmail(email)
 
     if(!user.success){
@@ -71,6 +82,7 @@ async function register(req, res, next) {
 }
 async function login(req, res, next) {
     const { email, password} = req.body
+    console.log("login: ",{email, password})
     if (!email) {
         return res.status(400).json({ message: 'Email is required' })
     }

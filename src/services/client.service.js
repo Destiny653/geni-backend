@@ -326,6 +326,7 @@ const registerClient = async (_data) => {
 const resetPassword = async (password, email) => {
     try {
         const user = await Client.findOne({ email })
+        console.log("User: ", user)
         if (!user) {
             return {
                 success: false,
@@ -334,8 +335,7 @@ const resetPassword = async (password, email) => {
             }
         }
         user.password = await hashPassword(password)
-        await user.save()
-        Otp.deleteOne({ _id: userOTP._id });
+        await user.save() 
         return {
             success: true,
             status: 200,
@@ -355,7 +355,7 @@ const resetPassword = async (password, email) => {
 
 const verifyOTP = async (otp) => {
     try {
-        const data1 = await Otp.findOne({ "otp": otp })
+        const data1 = await Otp.findOne({"otp":otp }) 
         if (!data1) {
             return {
                 success: false,
@@ -372,7 +372,7 @@ const verifyOTP = async (otp) => {
             return {
                 success: true,
                 status: 200,
-                message: 'Your email has been validated you may proceed to registration.',
+                message: 'Your email has been validated!.',
                 data,
                 token
             }
@@ -406,7 +406,7 @@ const verifyPassword = async (password, data) => {
         return {
             success: false,
             status: 401,
-            message: 'Incorrect password',
+            message: 'Incorrect email or password',
             data: {},
         }
     }
