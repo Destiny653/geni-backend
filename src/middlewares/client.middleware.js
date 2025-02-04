@@ -104,6 +104,20 @@ async function login(req, res, next) {
     next();
 }
 
+async function token(req, res, next){
+    const {token} = req.params
+    if(!token){
+        return res.status(400).json({ message: 'No token found' })
+    }
+    const tokenVerify = await clientService.verifyClient('token', token, "Otp")
+    if (!tokenVerify.success) {
+        return res.status(tokenVerify.status).json({ message: tokenVerify.message })
+    } else{
+        return res.status(tokenVerify.status).json({tokenVerify})
+    }
+
+}
+
 const verifyEmail = async (req, res, next) => {
     const { email } = req.body;
     const user = await clientService.verifyClient("email", email)
@@ -157,6 +171,7 @@ async function message(req, res, next) {
 module.exports = {
     authenticateOTP,
     login,
+    token,
     register,
     message,
     verifyEmail,

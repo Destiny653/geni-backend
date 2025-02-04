@@ -1,10 +1,10 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const otpSchema = new Schema({
-    client:{
+    client: {
         type: String,
         ref: 'Client',
-        unique:true,
+        unique: true,
         required: true
     },
     otp: {
@@ -12,11 +12,15 @@ const otpSchema = new Schema({
         required: true,
         unique: true
     },
-    expired_at:{
+    token: {
+        type: String,
+        required: false
+    },
+    expired_at: {
         type: Date,
         required: true,
         default: Date.now() + 300000 // 5 minutes
     }
-},{timestamps: true})
+}, { timestamps: true })
 
 module.exports = model('Otp', otpSchema);

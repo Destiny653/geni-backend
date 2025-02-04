@@ -7,6 +7,7 @@ const clientMiddleware = require('../src/middlewares/client.middleware');
 router.post('/email', clientMiddleware.validateEmailZeroBounce, clientController.mailVerification)
 router.post('/otp', clientMiddleware.authenticateOTP)
 router.get('/authorized/:otp', clientController.authorizedClient)
+router.get('/token/:token', clientMiddleware.token)
 
 router.post('/register', clientMiddleware.register, clientController.registerClient);
 

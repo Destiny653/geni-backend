@@ -220,6 +220,8 @@ const clientLogin = async (data, password) => {
     const compare = await comparePasswords(password, data.password)
     if (compare.success) {
         const token = jwt.sign({ id: data._id }, 'secret_key', { expiresIn: '1h' });
+       const otp = await Otp.findOneAndUpdate({client:data.email},{$set:{token}})
+       console.log("OPTlog: ",otp, data.email)
         return {
             success: true,
             status: 200,
@@ -231,7 +233,7 @@ const clientLogin = async (data, password) => {
         return {
             success: false,
             status: 401,
-            message: 'Incorrect password',
+            message: 'Incorrect email or password',
             data: {},
         }
     }
