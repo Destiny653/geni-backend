@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage,
     limits: {
-        fileSize: (1024 * 1024) * 2 // 2MB
+        fileSize: (1024 * 1024) * 4 // 4MB
     },
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png'];
@@ -35,7 +35,7 @@ const upload = multer({
     }
 }); 
 async function create(req, res, next) {
-    const { title, description, price, rate, model } = req.body 
+    const { title, description, price, rate, model, ageGroup, subCategory, reviewCount, badge, stockStatus } = req.body 
     
     const img = `${req.protocol}s://${req.get('host')}/${req.file.filename}`;
     console.log("File is: ", req.file);
@@ -55,14 +55,19 @@ async function create(req, res, next) {
     } 
     if (!model) {
         return res.status(401).json({ success: false, message: 'Model is required.' })
-    }
+    } 
     req._data = {
         title,
         description,
         price,
         rate,
         img,
-        model,
+        model, 
+        ageGroup, 
+        stockStatus,
+        badge,
+        reviewCount,
+        subCategory,
     }
     next()
 }
