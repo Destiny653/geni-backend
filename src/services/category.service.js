@@ -3,6 +3,7 @@ const Valies = require('../models/Valies')
 const Toy = require('../models/Toy')
 const Underwear = require('../models/Underwear')
 const Clothing = require('../models/Clothing')
+const Diaper = require('../models/Diaper')
 
 const verifyProduct = async (key, value, model) => {
     console.log("model is: ", model);
@@ -12,7 +13,8 @@ const verifyProduct = async (key, value, model) => {
         'Bath': Bath,
         'Valies': Valies,
         'Toy': Toy,
-        'Underwear': Underwear
+        'Underwear': Underwear,
+        'Diaper': Diaper
     };
 
     try {
@@ -82,7 +84,8 @@ const getOneProductModel = async (model) => {
             'Bath': Bath,
             'Valies': Valies,
             'Toy': Toy,
-            'Underwear': Underwear
+            'Underwear': Underwear,
+            'Diaper': Diaper
         };
 
         if (!modelMapping[model]) {
@@ -125,7 +128,7 @@ const getOneProductModel = async (model) => {
 
 const getAllProductModel = async () => {
     try {
-        const models = [Clothing, Bath, Valies, Toy, Underwear];  // Array of all models
+        const models = [Clothing, Bath, Valies, Toy, Underwear, Diaper];  // Array of all models
         let data = [];
 
         for (let model of models) {
@@ -166,7 +169,8 @@ const updateProduct = async (id, updatedData, model) => {
         'Bath': Bath,
         'Valies': Valies,
         'Toy': Toy,
-        'Underwear': Underwear
+        'Underwear': Underwear,
+        'Diaper': Diaper
     };
     try {
         const product = await modelMapping[model].findByIdAndUpdate(id, updatedData, { new: true });
@@ -204,7 +208,8 @@ const getProductById = async (id, model) => {
         'Bath': Bath,
         'Valies': Valies,
         'Toy': Toy,
-        'Underwear': Underwear
+        'Underwear': Underwear,
+        'Diaper': Diaper
     };
     try {
         const product = await modelMapping[model].findById(id);
@@ -241,7 +246,8 @@ const deleteProduct = async (id, model) => {
         'Bath': Bath,
         'Valies': Valies,
         'Toy': Toy,
-        'Underwear': Underwear
+        'Underwear': Underwear,
+        'Diaper': Diaper
     };
     try {
         await modelMapping[model].findByIdAndDelete(id);
