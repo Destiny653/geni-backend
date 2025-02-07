@@ -46,7 +46,7 @@ const underwearSchema = new Schema({
     },
     model:{
         type: String,
-        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'Underwear'], 
+        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'Underwear', 'Diaper'], 
         required: true
     } 
 },{timestamps: true}) 

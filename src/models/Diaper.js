@@ -46,7 +46,7 @@ const diaperSchema = new Schema({
     },
     model:{
         type: String,
-        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'diaper'], 
+        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'Diaper'], 
         required: true
     } 
 },{timestamps: true}) 
