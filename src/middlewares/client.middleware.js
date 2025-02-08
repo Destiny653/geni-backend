@@ -1,13 +1,21 @@
 const clientService = require('../services/client.service')
 
 async function validateEmailZeroBounce(req, res, next) {
-    const { email } = req.body
+    const { email, message } = req.body
     console.log(email);
     // Step 2: Perform real-time email validation
+
     const isValidEmail = await clientService.validateEmail(email);
     console.log('isValidEmail', isValidEmail);
     if (!isValidEmail.success) {
         return res.status(isValidEmail.status).json(isValidEmail);
+    }
+
+    if(message !== 'reset'){
+        const verifyEmail = await clientService.verifyClient("email", email, 'Client')
+        if(verifyEmail.success){
+            return res.status(401).json({message:`Client with email: "${email}" already exist try using another email.`})
+        }
     }
 
     next()

@@ -220,8 +220,8 @@ const clientLogin = async (data, password) => {
     const compare = await comparePasswords(password, data.password)
     if (compare.success) {
         const token = jwt.sign({ id: data._id }, 'secret_key', { expiresIn: '1h' });
-       const otp = await Otp.findOneAndUpdate({client:data.email},{$set:{token}})
-       console.log("OPTlog: ",otp, data.email)
+        const otp = await Otp.findOneAndUpdate({ client: data.email }, { $set: { token } })
+        console.log("OPTlog: ", otp, data.email)
         return {
             success: true,
             status: 200,
@@ -325,7 +325,7 @@ const registerClient = async (_data) => {
     }
 }
 
-const resetPassword = async (password, email) => {
+const resetPassword = async (newPassword, email) => {
     try {
         const user = await Client.findOne({ email })
         console.log("User: ", user)
@@ -336,14 +336,15 @@ const resetPassword = async (password, email) => {
                 message: 'User not found'
             }
         }
-        user.password = await hashPassword(password)
-        await user.save() 
-        return {
-            success: true,
-            status: 200,
-            message: 'Password reset successfully',
-            data: {
-                email: user.email
+        const password = await hashPassword(newPassword)
+        const update = await Client.findOneAndUpdate({ email: user.email }, {password}, { new: true })
+        console.log("updtatedata",update)
+        if (update) {
+            return {
+                success: true,
+                status: 200,
+                message: 'Password reset successfully',
+                data: user.email 
             }
         }
     } catch (error) {
@@ -357,7 +358,7 @@ const resetPassword = async (password, email) => {
 
 const verifyOTP = async (otp) => {
     try {
-        const data1 = await Otp.findOne({"otp":otp }) 
+        const data1 = await Otp.findOne({ "otp": otp })
         if (!data1) {
             return {
                 success: false,
