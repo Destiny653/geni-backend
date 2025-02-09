@@ -172,7 +172,8 @@ async function message(req, res, next) {
         message, 
         title,
         client: user.data._id,
-        phone
+        phone,
+        email
     };
     next();
 }
