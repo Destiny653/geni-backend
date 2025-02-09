@@ -67,18 +67,15 @@ const sendMail = async (email, otp) => {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: 'Geni-i Verification Code',
+            subject: 'BabyBliss Verification Code',
             html: `
-                <h1>Welcome to GENI~I Provision!</h1>
+                <h1>Welcome to Babybliss Provision!</h1>
                 <h3>Use this code to continue your registration process.</h3>
                 <h4>Your verification code is: <h1 style="color:green">${otp}</h1></h4>
                 <p>This code will expire in 15 minutes.</p>
                 <p>Please do not share this code with anyone else.</p>
                 <p>If you did not request this verification code, please ignore this email.</p>
-                <p>Thank you for using GENI~I Provision.</p>
-                <a href="https://geni-dashboard.vercel.app/dashboard/login">
-                <button style="background-color:blue; border-radius:4px; padding: 3px 4px">Click to continue</button>
-                </a>
+                <p>Thank you for using BabyBliss Provision.</p>  
             `,
         };
 
