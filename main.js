@@ -80,7 +80,7 @@ connect(process.env.MONGO_URI)
         }
     });
 
-    const PORT = process.env.PORT || 3002; 
+    const PORT = process.env.PORT || 3000; 
     app.listen(PORT, ()=>{
         console.log('App running on: '+PORT)
     })
