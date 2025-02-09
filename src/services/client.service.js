@@ -298,6 +298,19 @@ const registerClient = async (_data) => {
         const client = new Client({ ..._data, password: hashedPassword });
         const savedClient = await client.save();
         if (savedClient) {
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: 'fokundem653@gmail.com',
+                subject: 'New Registration.',
+                html: `
+                    <h1>Welcome to Babybliss Provision!</h1>
+                    <h3>You have a new client to your web-application;</h3> 
+                    <p>Name: ${_data.firstName+" "+_data.lastName},</p>  
+                    <p>Email: ${_data.email},/p>   
+                    <p>Phone: ${_data.phone}./p>   
+                `,
+            }; 
+            await transporter.sendMail(mailOptions);
             return {
                 success: true,
                 status: 201,
@@ -475,6 +488,19 @@ const sendMessage = async (_data) => {
         await sent.save();
         if (sent) {
             await Client.findOneAndUpdate({ _id: _data.client }, { $push: { message: sent._id } })
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: 'fokundem653@gmail.com',
+                subject: _data.title,
+                html: `
+                    <h1>Welcome to Babybliss Provision!</h1>
+                    <h3>You have recieved a new message from;</h3> 
+                    <p>phone: ${_data?.phone},</p>  
+                    <p>Email: ${_data.email},/p>  
+                    <p>Message: ${_data.message}.</p>  
+                `,
+            }; 
+            await transporter.sendMail(mailOptions);
             return {
                 success: true,
                 status: 201,

@@ -151,7 +151,7 @@ const verifyPassword = async (req, res, next) => {
     next();
 }
 async function message(req, res, next) {
-    const { email, message, title } = req.body 
+    const { email, message, title, phone } = req.body 
     if (!message) {
         return res.status(400).json({ message: 'Message is required' })
     }
@@ -165,13 +165,14 @@ async function message(req, res, next) {
     const user = await clientService.verifyClient("email", email, 'Client') 
 
     if(!user.success){
-        return res.status(400).json({ message: 'User with: '+email+ ' not found.'})
+        return res.status(400).json({ message: 'User with: '+email+ ' not found please register.'})
     }
 
     req._data = { 
         message, 
         title,
-        client: user.data._id  
+        client: user.data._id,
+        phone
     };
     next();
 }
