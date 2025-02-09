@@ -247,15 +247,16 @@ const generateOTP = async (email) => {
             // OTP already expired generate new one
             const otpCode = await random(6);
             console.log("newOtpCode: ", otpCode);
-            const otp = await Otp.findByIdAndUpdate({ _id: client.data._id }, { $set: { otp: otpCode, expired_at: generateExpired(15) } })
+            await Otp.findByIdAndUpdate({ _id: client.data._id }, { $set: { otp: otpCode, expired_at: generateExpired(15) } })
             return {
                 success: true,
                 status: 200,
                 message: 'OTP sent successfully',
-                data: otp,
+                data: otpCode,
             }
         }
-        const otpCode = await random(6);
+        const otpCode = await random(6); 
+
         console.log("otpCode: ", otpCode);
 
         const otp = new Otp({
@@ -268,7 +269,7 @@ const generateOTP = async (email) => {
             success: true,
             status: 200,
             message: 'OTP sent successfully',
-            data: otp,
+            data: otpCode,
         }
     } catch (error) {
         console.error(error);
@@ -282,9 +283,9 @@ const generateOTP = async (email) => {
 }
 
 const authenticateEmail = async (email) => {
-    const otp = await generateOTP(email)
+    const otp = await generateOTP(email) 
     if (otp.success) {
-        const sendOTP = await sendMail(email, otp.data.otp)
+        const sendOTP = await sendMail(email, otp.data)
         console.log("Email sent: " + JSON.stringify(sendOTP));
         return {
             success: true,
