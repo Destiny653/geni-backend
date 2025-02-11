@@ -1,4 +1,5 @@
- async function createOrder(req, res, next) {
+// const clientService = require()
+async function createOrder(req, res, next) {
     const {products } = req.body
     req._data = { 
         products

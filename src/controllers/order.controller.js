@@ -1,6 +1,14 @@
 const orderService = require('../services/order.service')
+const clientService = require('../services/client.service')
 const createOrder = async(req, res)=>{
     const products = req.body
+    const checkClient = await  clientService.verifyClient('email', products.client, 'Client')
+    
+    if(!checkClient.success){
+        return res.status(401).json({message: 'Client not found please register first', success:false})
+    }
+    products.client = checkClient.data._id
+    console.log("checking: ",checkClient);
     const data = await orderService.createOrder(products)
     res.status(data.status).json(data)
 }

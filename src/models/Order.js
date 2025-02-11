@@ -22,7 +22,7 @@ const orderSchema = new Schema({
                 required: true
             },
             productTotal: {
-                type: Number, 
+                type: Number,
                 default: function () {
                     return this.quantity * this.price;
                 }
@@ -35,8 +35,34 @@ const orderSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'processing', 'delivered', 'cancelled'],
+        enum: ['pending', 'paid', 'processing', 'delivered', 'cancelled'],
         default: 'pending'
+    },
+    shippingAddress: {
+        fullName: {
+            type: String,
+            required: true
+        }, 
+        city: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        zipCode: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
     }
 }, { timestamps: true })
 

@@ -6,10 +6,10 @@ const orderMiddleware = require('../src/middlewares/order.middleware');
 
 router.get('/', orderController.getOrders)
 
-router.post('/create', orderController.createOrder);
+router.post('/', orderController.createOrder);
 
-router.put('/update', orderMiddleware.updateOrder, orderController.updateOrderById)
+router.put('/', orderMiddleware.updateOrder, orderController.updateOrderById)
 
-router.delete('/delete/:id', orderMiddleware.deleteOrder, orderController.deleteOrderById)
+router.delete('/:id', orderMiddleware.deleteOrder, orderController.deleteOrderById)
 
 module.exports = router;

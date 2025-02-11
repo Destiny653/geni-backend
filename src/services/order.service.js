@@ -59,23 +59,23 @@ const sendMail = async (email, status) => {
     }
 };
 const createOrder = async (data) => {
-    console.log("this data: ", data);
     
     try {
         // Calculate productTotal for each product
         data.products = data.products.map(product => ({
-            ...product, productTotal: product.quantity * product.price
+            ...product, productTotal: product.quantity * product.price, product
         }))
         // Calculate the total order price
-        data.total = data.products.reduce((total, product) => total + product.productTotal, 70)
-        console.log("total of data: ", data.total)
+        data.total = data.products.reduce((total, product) => total + product.productTotal, 0).toFixed(2) 
         // Create a new order
         const order = new Order(data)
+        console.log("ORder: ", order)
         await order.save() 
         
         if (order) {
+            // const verifyIf
             // update the client by pushing order id
-            const client =  await Client.findByIdAndUpdate({ _id: data.clientId }, { $push: { orders: order._id } }, { new: true }).exec();
+            const client =  await Client.findByIdAndUpdate({ _id: data.client }, { $push: { orders: order._id } }, { new: true }).exec();
             await sendMail(client.email, order.status)
 
             return {
@@ -89,7 +89,7 @@ const createOrder = async (data) => {
         return {
             success: false,
             status: 500,
-            message: 'Internal server error: ' + error
+            message: 'Internal server error: ' + error.message
         }
     }
 }

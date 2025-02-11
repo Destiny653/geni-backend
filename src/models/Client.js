@@ -1,6 +1,6 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const  clientSchema = new Schema({
+const clientSchema = new Schema({
     firstName: {
         type: String,
         required: true
@@ -11,7 +11,7 @@ const  clientSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true, 
+        unique: true,
         required: false,
     },
     password: {
@@ -24,7 +24,7 @@ const  clientSchema = new Schema({
         unique: true
     },
     role: {
-        type: String, 
+        type: String,
         default: 'client',
         enum: ['admin', 'client']
     },
@@ -33,9 +33,16 @@ const  clientSchema = new Schema({
         ref: 'Message'
     }],
     orders: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Order'
+        order: {
+            type: Schema.Types.ObjectId,
+            ref: 'Order'
+        },
+        created_at:{
+            type: Date,
+            default: new Date()
+        }
     }]
-},{timestamps: true})
 
-module.exports = model('Client',  clientSchema);
+}, { timestamps: true })
+
+module.exports = model('Client', clientSchema);
