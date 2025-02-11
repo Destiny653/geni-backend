@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 
-const diaperSchema = new Schema({
+const feedingSchema = new Schema({
     title:{
         type: String,
         required: true
@@ -51,4 +51,4 @@ const diaperSchema = new Schema({
     } 
 },{timestamps: true}) 
 
-module.exports = model('Diaper', diaperSchema);
+module.exports = model('Feeding', feedingSchema);

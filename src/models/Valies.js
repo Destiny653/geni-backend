@@ -23,7 +23,7 @@ const valiesSchema = new Schema({
     },
     model:{
         type: String,
-        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'Underwear', 'Diaper'], 
+        enum:['Clothing', 'Toy', 'Bath', 'Valies', 'Underwear', 'Diaper', 'Feeding'], 
         required: true
     }
 },{timestamps: true}) 

@@ -4,6 +4,7 @@ const Toy = require('../models/Toy')
 const Underwear = require('../models/Underwear')
 const Clothing = require('../models/Clothing')
 const Diaper = require('../models/Diaper')
+const Feeding = require('../models/Feeding')
 
 const verifyProduct = async (key, value, model) => {
     console.log("model is: ", model);
@@ -14,7 +15,8 @@ const verifyProduct = async (key, value, model) => {
         'Valies': Valies,
         'Toy': Toy,
         'Underwear': Underwear,
-        'Diaper': Diaper
+        'Diaper': Diaper,
+        'Feeding': Feeding,
     };
 
     try {
@@ -52,7 +54,9 @@ const createProduct = async (_data, model) => {
         'Bath': Bath,
         'Valies': Valies,
         'Toy': Toy,
-        'Underwear': Underwear
+        'Underwear': Underwear,
+        'Feeding': Feeding,
+        'Diaper': Diaper,
     };
     try {
         const product = new modelMapping[model](_data);
@@ -85,7 +89,8 @@ const getOneProductModel = async (model) => {
             'Valies': Valies,
             'Toy': Toy,
             'Underwear': Underwear,
-            'Diaper': Diaper
+            'Diaper': Diaper,
+            'Feeding': Feeding,
         };
 
         if (!modelMapping[model]) {
@@ -128,7 +133,7 @@ const getOneProductModel = async (model) => {
 
 const getAllProductModel = async () => {
     try {
-        const models = [Clothing, Bath, Valies, Toy, Underwear, Diaper];  // Array of all models
+        const models = [Clothing, Bath, Valies, Toy, Underwear, Diaper, Feeding];  // Array of all models
         let data = [];
 
         for (let model of models) {
@@ -170,7 +175,8 @@ const updateProduct = async (id, updatedData, model) => {
         'Valies': Valies,
         'Toy': Toy,
         'Underwear': Underwear,
-        'Diaper': Diaper
+        'Diaper': Diaper,
+        'Feeding': Feeding,
     };
     try {
         const product = await modelMapping[model].findByIdAndUpdate(id, updatedData, { new: true });
@@ -209,7 +215,8 @@ const getProductById = async (id, model) => {
         'Valies': Valies,
         'Toy': Toy,
         'Underwear': Underwear,
-        'Diaper': Diaper
+        'Diaper': Diaper,
+        'Feeding': Feeding,
     };
     try {
         const product = await modelMapping[model].findById(id);
@@ -247,7 +254,8 @@ const deleteProduct = async (id, model) => {
         'Valies': Valies,
         'Toy': Toy,
         'Underwear': Underwear,
-        'Diaper': Diaper
+        'Diaper': Diaper,
+        'Feeding': Feeding,
     };
     try {
         await modelMapping[model].findByIdAndDelete(id);
