@@ -76,7 +76,7 @@ const createOrder = async (data) => {
             // const verifyIf
             // update the client by pushing order id
             const client =  await Client.findByIdAndUpdate({ _id: data.client }, { $push: { orders: order._id } }, { new: true }).exec();
-            await sendMail(client.email, order.status)
+            await sendMail(client.email, order.status) 
 
             return {
                 success: true,

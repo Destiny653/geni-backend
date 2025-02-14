@@ -252,7 +252,7 @@ const generateOTP = async (email) => {
                 data: otpCode,
             }
         }
-        const otpCode = await random(6); 
+        const otpCode = await random(6);
 
         console.log("otpCode: ", otpCode);
 
@@ -280,7 +280,7 @@ const generateOTP = async (email) => {
 }
 
 const authenticateEmail = async (email) => {
-    const otp = await generateOTP(email) 
+    const otp = await generateOTP(email)
     if (otp.success) {
         const sendOTP = await sendMail(email, otp.data)
         console.log("Email sent: " + JSON.stringify(sendOTP));
@@ -298,33 +298,26 @@ const registerClient = async (_data) => {
         const client = new Client({ ..._data, password: hashedPassword });
         const savedClient = await client.save();
         if (savedClient) {
-            const mailOptions = {
-                from: process.env.EMAIL,
-                to: 'fokundem653@gmail.com',
-                subject: 'New Registration.',
-                html: `
-                    <h1>Welcome to Babybliss Provision!</h1>
-                    <h3>You have a new client to your web-application;</h3> 
-                    <p>Name: ${_data.firstName+" "+_data.lastName},</p>  
-                    <p>Email: ${_data.email},/p>   
-                    <p>Phone: ${_data.phone}./p>   
-                `,
-            }; 
-            await transporter.sendMail(mailOptions);
             return {
                 success: true,
                 status: 201,
                 message: 'Client registered successfully',
                 data: savedClient,
             }
-        } else {
-            return {
-                success: false,
-                status: 500,
-                message: 'Internal server error: Failed to save client',
-                data: {},
-            }
         }
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: 'fokundem653@gmail.com',
+            subject: 'New Registration.',
+            html: `
+                    <h1>Welcome to Babybliss Provision!</h1>
+                    <h3>You have a new client to your web-application;</h3> 
+                    <p>Name: ${_data.firstName + " " + _data.lastName},</p>  
+                    <p>Email: ${_data.email},</p>   
+                    <p>Phone: ${_data.phone}.</p>   
+                `,
+        };
+        await transporter.sendMail(mailOptions);
     } catch (error) {
         console.error(error);
         return {
@@ -348,14 +341,14 @@ const resetPassword = async (newPassword, email) => {
             }
         }
         const password = await hashPassword(newPassword)
-        const update = await Client.findOneAndUpdate({ email: user.email }, {password}, { new: true })
-        console.log("updtatedata",update)
+        const update = await Client.findOneAndUpdate({ email: user.email }, { password }, { new: true })
+        console.log("updtatedata", update)
         if (update) {
             return {
                 success: true,
                 status: 200,
                 message: 'Password reset successfully',
-                data: user.email 
+                data: user.email
             }
         }
     } catch (error) {
@@ -499,7 +492,7 @@ const sendMessage = async (_data) => {
                     <p>Email: ${_data.email},/p>  
                     <p>Message: ${_data.message}.</p>  
                 `,
-            }; 
+            };
             await transporter.sendMail(mailOptions);
             return {
                 success: true,
