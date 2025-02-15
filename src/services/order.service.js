@@ -26,7 +26,8 @@ const sendMail = async (email, status) => {
             subject: 'Verification Code',
             html: `
                 <h1>Welcome to GENI~I Provision!</h1>
-                <h3>Thank you for making a deal with us your orders will be handled appropriately.</h3>
+                <h3>Thank you for doing bussiness with us your orders will be processed immidiately.</h3>
+                <h4>Feel free to ask questions <a href="https://babybliss-seven.vercel.app/contact">Contact</a></h4>
                 <h4>Your product is: <h1 style="color:green">${status}</h1></h4>
             `,
         };
