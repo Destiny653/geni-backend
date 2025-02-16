@@ -5,7 +5,7 @@ const createOrder = async(req, res)=>{
     const checkClient = await  clientService.verifyClient('email', products.client, 'Client')
     
     if(!checkClient.success){
-        return res.status(401).json({message: 'Client not found please register first', success:false})
+        return res.status(401).json({message: 'Please signin first to make purchase.', success:false})
     }
     products.client = checkClient.data._id
     console.log("checking: ",checkClient);
