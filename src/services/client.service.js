@@ -67,17 +67,24 @@ const sendMail = async (email, otp) => {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: 'BabyBliss Verification Code',
+            subject: "🔐 BabyBliss Verification Code",
             html: `
-                <h1>Welcome to Babybliss Provision!</h1>
-                <h3>Use this code to continue your registration process.</h3>
-                <h4>Your verification code is: <h1 style="color:green">${otp}</h1></h4>
-                <p>This code will expire in 15 minutes.</p>
-                <p>Please do not share this code with anyone else.</p>
-                <p>If you did not request this verification code, please ignore this email.</p>
-                <p>Thank you for using BabyBliss Provision.</p>  
+              <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h2 style="color: #007bff;">👶 Welcome to BabyBliss Provision!</h2>
+                <p style="font-size: 16px; color: #555;">Use this code to continue your registration process.</p>
+                <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 8px;">
+                  <p style="font-size: 18px; font-weight: bold; margin: 0;">Your verification code:</p>
+                  <h1 style="color: green; margin: 5px 0;">${otp}</h1>
+                </div>
+                <p style="font-size: 14px; color: #555;">This code will expire in <strong>15 minutes</strong>.</p>
+                <p style="font-size: 14px; color: red;"><strong>Do not share this code</strong> with anyone.</p>
+                <p style="font-size: 14px; color: #777;">If you did not request this verification code, you can safely ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 14px; color: #777;">Thank you for choosing BabyBliss Provision. 💙</p>
+              </div>
             `,
         };
+
 
         // Step 4: Send the email
         const info = await transporter.sendMail(mailOptions);
@@ -307,16 +314,22 @@ const registerClient = async (_data) => {
         }
         const mailOptions = {
             from: process.env.EMAIL,
-            to: 'fokundem653@gmail.com',
-            subject: 'New Registration.',
+            to: "fokundem653@gmail.com",
+            subject: "🎉 New Client Registration - Babybliss Provision",
             html: `
-                    <h1>Welcome to Babybliss Provision!</h1>
-                    <h3>You have a new client to your web-application;</h3> 
-                    <p>Name: ${_data.firstName + " " + _data.lastName},</p>  
-                    <p>Email: ${_data.email},</p>   
-                    <p>Phone: ${_data.phone}.</p>   
-                `,
+              <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h2 style="color: #007bff;">👶 Welcome to Babybliss Provision!</h2>
+                <p style="font-size: 16px; color: #555;">A new client has registered on your web application.</p>
+                <hr style="border: none; border-top: 1px solid #e0e0e0;">
+                <p><strong>Name:</strong> ${_data.firstName} ${_data.lastName}</p>
+                <p><strong>Email:</strong> <a href="mailto:${_data.email}" style="color: #007bff;">${_data.email}</a></p>
+                <p><strong>Phone:</strong> ${_data.phone}</p>
+                <hr style="border: none; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 14px; color: #777;">This is an automated notification from your website.</p>
+              </div>
+            `,
         };
+
         await transporter.sendMail(mailOptions);
     } catch (error) {
         console.error(error);

@@ -23,18 +23,27 @@ const sendMail = async (email, status) => {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: 'Verification Code',
+            subject: "🛍️ Order Confirmation - GENI~I Provision",
             html: `
-                <h1>Welcome to GENI~I Provision!</h1>
-                <h3>Thank you for doing bussiness with us your orders will be processed immidiately.</h3>
-                <h4>Feel free to ask questions <a href="https://babybliss-seven.vercel.app/contact">Contact</a></h4>
-                <h4>Your product is: <h1 style="color:green">${status}</h1></h4>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h2 style="color: #007bff;">🎉 Welcome to GENI~I Provision!</h2>
+                <p style="font-size: 16px; color: #555;">Thank you for doing business with us. Your order is being processed and will be handled immediately.</p>
+                <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 8px;">
+                  <p style="font-size: 18px; font-weight: bold; margin: 0;">Order Status:</p>
+                  <h1 style="color: green; margin: 5px 0;">${status}</h1>
+                </div>
+                <p style="font-size: 16px; color: #555;">If you have any questions, feel free to reach out:</p>
+                <p><a href="https://babybliss-seven.vercel.app/contact" style="color: #007bff; font-weight: bold;">📩 Contact Us</a></p>
+                <hr style="border: none; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 14px; color: #777;">Thank you for choosing GENI~I Provision. We appreciate your trust in us! 💙</p>
+              </div>
             `,
-        };
+          };
+          
 
         // Step 4: Send the email
         const info = await transporter.sendMail(mailOptions);
-        return {
+        return { 
             success: true,
             status: 200,
             message: 'Verification code sent to your email',
