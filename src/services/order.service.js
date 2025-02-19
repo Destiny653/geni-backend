@@ -26,7 +26,7 @@ const sendMail = async (email, status) => {
             subject: "🛍️ Order Confirmation - GENI~I Provision",
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                <h2 style="color: #007bff;">🎉 Welcome to GENI~I Provision!</h2>
+                <h2 style="color: #007bff;">🎉 Welcome to Babybliss Provision!</h2>
                 <p style="font-size: 16px; color: #555;">Thank you for doing business with us. Your order is being processed and will be handled immediately.</p>
                 <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 8px;">
                   <p style="font-size: 18px; font-weight: bold; margin: 0;">Order Status:</p>

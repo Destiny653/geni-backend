@@ -496,16 +496,33 @@ const sendMessage = async (_data) => {
             await Client.findOneAndUpdate({ _id: _data.client }, { $push: { message: sent._id } })
             const mailOptions = {
                 from: process.env.EMAIL,
-                to: 'fokundem653@gmail.com',
+                to: "fokundem653@gmail.com",
                 subject: _data.title,
                 html: `
-                    <h1>Welcome to Babybliss Provision!</h1>
-                    <h3>You have recieved a new message from;</h3> 
-                    <p>phone: ${_data?.phone},</p>  
-                    <p>Email: ${_data.email},/p>  
-                    <p>Message: ${_data.message}.</p>  
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border-radius: 10px; background: #f9f9f9; border: 1px solid #e0e0e0;">
+                    <h2 style="color: #333; text-align: center;">📩 New Message Received</h2>
+                    
+                    <p style="font-size: 16px; color: #555;">You have received a new message from:</p>
+              
+                    <div style="background: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                      <p><strong>📞 Phone:</strong> ${_data?.phone}</p>
+                      <p><strong>✉️ Email:</strong> ${_data.email}</p>
+                      <p><strong>💬 Message:</strong> ${_data.message}</p>
+                    </div>
+              
+                    <p style="text-align: center; margin-top: 20px;">
+                      <a href="mailto:${_data.email}" 
+                        style="display: inline-block; padding: 10px 20px; color: #fff; background: #007bff; text-decoration: none; border-radius: 5px;">
+                        Reply to Sender
+                      </a>
+                    </p>
+              
+                    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+                    <p style="font-size: 14px; text-align: center; color: #888;">This is an automated notification from BabyBliss Provision.</p>
+                  </div>
                 `,
             };
+
             await transporter.sendMail(mailOptions);
             return {
                 success: true,
