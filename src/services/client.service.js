@@ -74,7 +74,7 @@ const sendMail = async (email, otp) => {
                 <p style="font-size: 16px; color: #555;">Use this code to continue your registration process.</p>
                 <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 8px;">
                   <p style="font-size: 18px; font-weight: bold; margin: 0;">Your verification code:</p>
-                  <h1 style="color: green; margin: 5px 0;">${otp}</h1>
+                  <h1 style="color: #007bff; margin: 5px 0;">${otp}</h1>
                 </div>
                 <p style="font-size: 14px; color: #555;">This code will expire in <strong>15 minutes</strong>.</p>
                 <p style="font-size: 14px; color: red;"><strong>Do not share this code</strong> with anyone.</p>

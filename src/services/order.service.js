@@ -23,14 +23,14 @@ const sendMail = async (email, status) => {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: "🛍️ Order Confirmation - GENI~I Provision",
+            subject: "🛍️ Order Confirmation - BabyBliss Provision",
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                 <h2 style="color: #007bff;">🎉 Welcome to Babybliss Provision!</h2>
                 <p style="font-size: 16px; color: #555;">Thank you for doing business with us. Your order is being processed and will be handled immediately.</p>
                 <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 8px;">
                   <p style="font-size: 18px; font-weight: bold; margin: 0;">Order Status:</p>
-                  <h1 style="color: green; margin: 5px 0;">${status}</h1>
+                  <h1 style="color: #007bff; margin: 5px 0;">${status}</h1>
                 </div>
                 <p style="font-size: 16px; color: #555;">If you have any questions, feel free to reach out:</p>
                 <p><a href="https://babybliss-seven.vercel.app/contact" style="color: #007bff; font-weight: bold;">📩 Contact Us</a></p>
